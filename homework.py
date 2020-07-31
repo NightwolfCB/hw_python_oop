@@ -4,14 +4,17 @@ class Calculator:
     def __init__(self, limit):
         self.limit = limit
         self.records = []
+
     def add_record(self, record):    
         self.records.append(record)
+
     def get_today_stats(self):
         day_sum = 0   
         for i in self.records:
             if i.date == dt.date.today(): 
                 day_sum += i.amount
         return day_sum      
+
     def get_week_stats(self):  
         week_sum = 0
         now = dt.date.today()
@@ -20,6 +23,7 @@ class Calculator:
             if week_interval <= i.date <= now:
                 week_sum += i.amount
         return week_sum
+        
 
 class Record:
     def __init__(self, amount, comment, date=None):
@@ -29,6 +33,7 @@ class Record:
             self.date = dt.date.today()
         else:
             self.date = dt.datetime.strptime(date, '%d.%m.%Y').date()
+
                             
 class CashCalculator(Calculator):
     USD_RATE = float(60.0)
@@ -37,16 +42,15 @@ class CashCalculator(Calculator):
         cash_remained = self.limit - self.get_today_stats()
         self.currency = currency
         if currency == 'rub':
-            cash_remained_rub = round(cash_remained, 2)
-            currency_name = "руб."
-            if cash_remained_rub > 0:
-                return f'На сегодня осталось {cash_remained_rub} {currency_name}'
-            elif cash_remained_rub == 0:
+            currency_name = "руб"
+            if cash_remained > 0:
+                return f'На сегодня осталось {cash_remained} {currency_name}'
+            elif cash_remained == 0:
                 return f'Денег нет, держись'
             else:
-                cash_remained_abs = abs(cash_remained_rub)
+                cash_remained_abs = abs(cash_remained)
                 return f'Денег нет, держись: твой долг - {cash_remained_abs} {currency_name}'
- 
+
         elif currency == 'usd':
             cash_remained = round(cash_remained / (self.USD_RATE), 2)
             currency_name = "USD"
@@ -68,7 +72,8 @@ class CashCalculator(Calculator):
             else:
                 cash_remained_abs = abs(cash_remained)
                 return f'Денег нет, держись: твой долг - {cash_remained_abs} {currency_name}'
-    
+
+   
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
         calories_remained = self.limit - self.get_today_stats()
@@ -81,6 +86,6 @@ cash_calculator = CashCalculator(1000)
 cash_calculator.add_record(Record(amount=145, comment="кофе")) 
 cash_calculator.add_record(Record(amount=1000, comment="Серёге за обед"))
 cash_calculator.add_record(Record(amount=3000, comment="бар в Танин др", date="31.07.2020"))
-print(cash_calculator.get_today_cash_remained("eur"))
+print(cash_calculator.get_today_cash_remained("rub"))
 
     
